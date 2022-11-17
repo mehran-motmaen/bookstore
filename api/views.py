@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import viewsets, status, decorators
+from rest_framework import viewsets, status, decorators, permissions
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -13,11 +13,18 @@ from api.serializers import BookSerializer, AuthorSerializer
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = (IsAuthenticated,)
+    #permission_classes = (IsAuthenticated,)
     search_fields = ('name', 'description', 'author',)
     ordering = ('name',)
     http_method_names = ['post', 'get', 'put', 'delete']
 
+    def get_permissions(self):
+        """Returns the permission based on the type of action"""
+
+        if self.action == "list":
+            return [permissions.AllowAny()]
+
+        return [permissions.IsAuthenticated()]
     def list(self, request, *args, **kwargs):
         response = super(BookViewSet, self).list(request, *kwargs, **kwargs)
         return response
