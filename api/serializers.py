@@ -29,7 +29,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = '__all__'
-        read_only_fields = ('created_at')
+        read_only_fields = ('created_at',)
 
     def validate_name(self, data):
         try:
