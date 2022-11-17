@@ -6,11 +6,11 @@ from rest_framework import serializers
 from api.models import Book, Author
 
 
-class BookSerializer(serializer.ModelFieldSerializer):
+class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = '__all__'
-        read_only_fields = ('created_at')
+        read_only_fields = ('created_at',)
 
     def validate_name(self, data):
         try:
@@ -22,9 +22,10 @@ class BookSerializer(serializer.ModelFieldSerializer):
             raise serializers.ValidationError(
                 ('name should not contain :, ", [, ] ,white space and comma characters')
             )
+        return data
 
 
-class AuthorSerializer(serializer.ModelFieldSerializer):
+class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = '__all__'
@@ -40,3 +41,4 @@ class AuthorSerializer(serializer.ModelFieldSerializer):
             raise serializers.ValidationError(
                 ('name should not contain :, ", [, ] ,white space and comma characters')
             )
+        return data
