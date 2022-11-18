@@ -26,6 +26,8 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
+    added_by = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Author
         fields = '__all__'
@@ -42,3 +44,13 @@ class AuthorSerializer(serializers.ModelSerializer):
                 ('name should not contain :, ", [, ] ,white space and comma characters')
             )
         return data
+
+    def create(self, validated_data):
+        instance = super(AuthorSerializer, self).create(validated_data)
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        instance.added_by = user
+        instance.save()
+        return instance

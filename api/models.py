@@ -1,15 +1,16 @@
 from django.db import models
 
-
 # Create your models here.
 from django.conf import settings
 
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
-    pseudonym_name = models.CharField(max_length=100)
-    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='added_by')
     create_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = (("name", "added_by"),)
 
     def __str__(self):
         return self.name

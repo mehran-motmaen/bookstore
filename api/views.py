@@ -61,3 +61,5 @@ class AuthorViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
     ordering = ('name',)
     http_method_names = ['post', 'get', 'put', 'delete']
+
+
