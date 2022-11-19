@@ -23,8 +23,8 @@ from rest_framework_simplejwt.views import (
 from api.views import BookViewSet, AuthorViewSet
 from api.urls import router as api
 
-urlpatterns = [
 
+urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
