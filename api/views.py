@@ -1,10 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import viewsets, status, decorators, permissions
+from rest_framework import viewsets, status,  permissions
 from rest_framework.decorators import renderer_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework_xml.renderers import XMLRenderer
@@ -61,5 +60,3 @@ class AuthorViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
     ordering = ('name',)
     http_method_names = ['post', 'get', 'put', 'delete']
-
-

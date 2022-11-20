@@ -1,18 +1,14 @@
-from django.test import TestCase
-
 # Create your tests here.
 from django.urls import resolve
 from rest_framework import status
 from rest_framework.reverse import reverse
-from django.test import SimpleTestCase, Client
+from django.test import SimpleTestCase
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient
 
 from api.models import Author, Book
 from api.serializers import AuthorSerializer
 from api.views import BookViewSet, AuthorViewSet
-from rest_framework.test import APIRequestFactory
 
 
 class TestUrls(SimpleTestCase):
@@ -32,24 +28,29 @@ class TestJwt(APITestCase):
         user.save()
 
         url = reverse('token_obtain_pair')
-        resp = self.client.post(
+        response = self.client.post(
             url, {'username': 'user', 'password': 'pass'}, format='json')
 
-        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         user.is_active = True
         user.save()
 
-        resp = self.client.post(
+        response = self.client.post(
             url, {'username': 'user', 'password': 'pass'}, format='json')
 
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        resp = self.client.post(
+            url, {'username': 'user', 'password': 'invalid'}, format='json')
+
+        self.assertEqual(resp.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class TestBookView(APITestCase):
 
     def setUp(self):
-        user = User.objects.create_user(username='user', email='user@foo.com', password='pass')
+        user = User.objects.create_user(username='mehran', email='user@foo.com', password='pass')
         self.client.force_authenticate(user=user)
 
     def test_book_list_get(self):
@@ -75,7 +76,8 @@ class TestBookView(APITestCase):
         url = reverse('books-list')
         response = self.client.post(url,
                                     data=book, format='json')
-        self.assertEquals(response.status_code, 201)
+        self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+        self.assertEquals(Book.objects.all().count(), 1)
 
 
 class TestAuthorView(APITestCase):
@@ -104,6 +106,8 @@ class TestAuthorView(APITestCase):
         response = self.client.post(url,
                                     data=author, format='json')
         self.assertEquals(response.status_code, 201)
+        self.assertEquals(Author.objects.all().count(), 2)
+
 
     def test_author_list_post_invalid_name(self):
         author = {

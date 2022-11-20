@@ -7,7 +7,7 @@ from bookstore.validator import alphanumeric_with_space_validator
 
 class Author(models.Model):
     name = models.CharField(max_length=50, validators=[alphanumeric_with_space_validator])
-    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='added_by',
+    added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='User',
                                  blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
 
@@ -29,6 +29,9 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = _('Book')
 
 
 class RestrictUser(models.Model):

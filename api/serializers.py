@@ -1,8 +1,5 @@
-import string
 
-from django.db.migrations import serializer
 from rest_framework import serializers
-
 from api.models import Book, Author
 
 
@@ -13,15 +10,11 @@ class BookSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at',)
 
 
-
 class AuthorSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Author
         fields = '__all__'
         read_only_fields = ('created_at',)
-
-
 
     def create(self, validated_data):
         instance = super(AuthorSerializer, self).create(validated_data)
