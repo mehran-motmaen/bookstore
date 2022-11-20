@@ -86,7 +86,6 @@ class TestAuthorView(APITestCase):
         Author.objects.create(
             name='Mehran', added_by=user)
 
-
     def test_author_list_get(self):
         url = reverse('author-list')
         response = self.client.get(url)
@@ -118,34 +117,31 @@ class TestAuthorView(APITestCase):
         self.assertEqual(response.status_code, 400)
 
 
-class DeleteBookTest(APITestCase):
+class TestBookDelete(APITestCase):
     def setUp(self):
         User.objects.create_user(username='user', email='user@foo.com', password='pass')
         User.objects.create_user(username='mehran', email='user@foo.com', password='mehran')
 
-
-        url=reverse('token_obtain_pair')
+        url = reverse('token_obtain_pair')
         resp = self.client.post(url, {'username': 'user', 'password': 'pass'}, format='json')
         token = resp.data['access']
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
 
-    def delete_book_with_user(self):
+    def test_delete_book_with_user(self):
         author = Author.objects.create(
             name='Mehran', added_by=User.objects.get(username='user'))
         book = Book.objects.create(
             title='Mehran', author=author, price=123)
-
-        response=self.client.delete(f'api/bookstore/books/{book.id}')
+        url = reverse('books-detail', kwargs={'pk': book.pk})
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, 204)
 
-    def delete_book_with_user_fail_to_delete(self):
+    def test_delete_book_with_user_fail_to_delete(self):
         author = Author.objects.create(
             name='Mehran', added_by=User.objects.get(username='mehran'))
         book = Book.objects.create(
             title='Mehran', author=author, price=123)
 
-        response = self.client.delete(f'api/bookstore/books/{book.id}')
-        self.assertEqual(response.status_code, 204)
-
-
-
+        url = reverse('books-detail', kwargs={'pk': book.pk})
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, 405)
