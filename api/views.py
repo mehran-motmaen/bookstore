@@ -66,3 +66,11 @@ class AuthorViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
     ordering = ('name',)
     http_method_names = ['post', 'get', 'put', 'delete']
+
+    def get_renderers(self):
+        if self.request.content_type == 'application/xml':
+            self.renderer_classes = (XMLRenderer,)
+        else:
+            self.renderer_classes = (JSONRenderer,)
+
+        return super().get_renderers()
