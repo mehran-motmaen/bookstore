@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
-from rest_framework import viewsets, status,  permissions
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import renderer_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
@@ -12,7 +12,6 @@ from api.models import Book, Author
 from api.serializers import BookSerializer, AuthorSerializer
 
 
-@renderer_classes((JSONRenderer, XMLRenderer))
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -27,6 +26,14 @@ class BookViewSet(viewsets.ModelViewSet):
             return [permissions.AllowAny()]
 
         return [permissions.IsAuthenticated()]
+
+    def get_renderers(self):
+        if self.request.content_type == 'application/xml':
+            self.renderer_classes = (XMLRenderer,)
+        else:
+            self.renderer_classes = (JSONRenderer,)
+
+        return super().get_renderers()
 
     def list(self, request, *args, **kwargs):
         response = super(BookViewSet, self).list(request, *kwargs, **kwargs)
@@ -52,7 +59,6 @@ class BookViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@renderer_classes((JSONRenderer, XMLRenderer))
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     permission_classes = (IsAuthenticated,)
