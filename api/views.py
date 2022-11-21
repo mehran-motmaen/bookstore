@@ -1,8 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
-from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import renderer_classes
+from rest_framework import viewsets, status, permissions, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -15,8 +14,9 @@ from api.serializers import BookSerializer, AuthorSerializer
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    search_fields = ('name', 'description', 'author',)
-    ordering = ('name',)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'description', 'author__name']
+    ordering = ['name']
     http_method_names = ['post', 'get', 'put', 'delete']
 
     def get_permissions(self):
@@ -28,11 +28,11 @@ class BookViewSet(viewsets.ModelViewSet):
         return [permissions.IsAuthenticated()]
 
     def get_renderers(self):
+
         if self.request.content_type == 'application/xml':
             self.renderer_classes = (XMLRenderer,)
         else:
             self.renderer_classes = (JSONRenderer,)
-
         return super().get_renderers()
 
     def list(self, request, *args, **kwargs):
@@ -63,8 +63,9 @@ class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = AuthorSerializer
-    search_fields = ('name',)
-    ordering = ('name',)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
+    ordering = ['name']
     http_method_names = ['post', 'get', 'put', 'delete']
 
     def get_renderers(self):

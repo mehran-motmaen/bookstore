@@ -108,7 +108,6 @@ class TestAuthorView(APITestCase):
         self.assertEquals(response.status_code, 201)
         self.assertEquals(Author.objects.all().count(), 2)
 
-
     def test_author_list_post_invalid_name(self):
         author = {
             'name': 'author-test@@!@#',
